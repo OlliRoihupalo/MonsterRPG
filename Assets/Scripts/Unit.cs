@@ -7,7 +7,7 @@ public class Unit : MonoBehaviour
     public PlayerController playerController;
     public GameObject timeline;
     public GameObject cam;
-    public GameObject sprite;
+    //public GameObject sprite;
     public string faction;
     public float health;
     public int initiative;
@@ -26,13 +26,18 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        sprite.transform.LookAt(cam.transform.position);
+        //sprite.transform.LookAt(cam.transform.position);
     }
 
     public void CreateTimelineEvent()
     {
         TimelineEvent te = timeline.AddComponent<TimelineEvent>();
-        te.timelinePosition = initiative;
+        te.timelinePosition = RollInitiative();
         te.owner = this;
+    }
+
+    public int RollInitiative()
+    {
+        return initiative;
     }
 }

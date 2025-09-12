@@ -41,11 +41,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //path = new NavMeshPath();
-        /*
-        canvas = (Canvas)FindFirstObjectByType(typeof(Canvas));
-        message = GameObject.Find("Message");
-        */
+        //canvas = (Canvas)FindFirstObjectByType(typeof(Canvas));
         hover = null;
         //cam = GameObject.Find("CameraTarget");
         player = GameObject.Find("Player");
@@ -89,7 +85,7 @@ public class PlayerController : MonoBehaviour
         moveVector = moveAction.ReadValue<Vector2>();
         //cameraRotation = rotateAction.ReadValue<float>();
         //cam.transform.RotateAround(cam.transform.position, Vector3.up, cameraRotation * cameraRotationSpeed * Time.fixedDeltaTime);
-        movement = new Vector3(moveVector.x, 0, moveVector.y);
+        movement = new Vector3(moveVector.x, moveVector.y, 0);
         
         player.transform.Translate(cameraSpeed * Time.deltaTime * movement);
 
@@ -116,29 +112,14 @@ public class PlayerController : MonoBehaviour
                     print(hover.name);
                 }
             }
+            else if (activeUnit == unit)
+            {
+                //
+            }
             else
             {
                 //
             }
-            /*
-            else if (activeUnit == unit)
-            {
-                unit.agent.destination = current.transform.position;
-            }
-
-            bool pathfind = NavMesh.CalculatePath(zombieSpawn.transform.position, target.transform.position, NavMesh.AllAreas, path);
-            if (pathfind)
-            {
-                for (int i = 0; i < path.corners.Length - 1; i++)
-                {
-                    Debug.DrawLine(path.corners[i], path.corners[i + 1]);
-                }
-                Debug.Break();
-            }
-            else
-            {
-                print("No path found");
-            }*/
         }
     }
 
@@ -152,19 +133,18 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out rayHit, Mathf.Infinity, layerMask))
         {
-            if (Vector3.Angle(rayHit.normal, Vector3.up) < 60f)
+            hitPoint = rayHit.point;
+            hover = rayHit.collider.gameObject;
+            current.transform.position = hitPoint;
+            /*if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit unit))
             {
-                hitPoint = rayHit.point;
-                if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit unit))
-                {
-                    hover = rayHit.collider.gameObject;
-                }
-                else
-                {
-                    hover = null;
-                    current.transform.position = hitPoint;
-                }
+                hover = rayHit.collider.gameObject;
             }
+            else
+            {
+                hover = null;
+                current.transform.position = hitPoint;
+            }*/
         }
     }
 
@@ -197,6 +177,14 @@ public class PlayerController : MonoBehaviour
             if (e.timelinePosition == 0)
             {
                 Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
+                if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
+                {
+                    //
+                }
+                else
+                {
+                    // Begin the next round
+                }
             }
             else
             {
