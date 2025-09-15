@@ -6,7 +6,10 @@ public class TestingScript : MonoBehaviour
     void Start()
     {
         //Mom said if you die it's my turn
+
         //potato salad
+	//hello world
+        
     }
 
     // Update is called once per frame
