@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
         //canvas = (Canvas)FindFirstObjectByType(typeof(Canvas));
         hover = null;
         //cam = GameObject.Find("CameraTarget");
-        player = GameObject.FindGameObjectsWithTag("Player")[0];
+        player = GameObject.FindWithTag("Player");
         timeline = GameObject.Find("Timeline");
         playerInput = GetComponent<PlayerInput>();
         lookAction = playerInput.actions.FindAction("Cursor");
@@ -88,7 +88,10 @@ public class PlayerController : MonoBehaviour
         //cam.transform.RotateAround(cam.transform.position, Vector3.up, cameraRotation * cameraRotationSpeed * Time.fixedDeltaTime);
         movement = new Vector3(moveVector.x, moveVector.y, 0);
         
-        player.transform.Translate(cameraSpeed * Time.deltaTime * movement);
+        if (player != null)
+        {
+            player.transform.Translate(cameraSpeed * Time.deltaTime * movement);
+        }
 
         TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
 
@@ -104,14 +107,7 @@ public class PlayerController : MonoBehaviour
         {
             if (hover != null)
             {
-                if (hover.GetComponent<Unit>().faction == "Player")
-                {
-                    unit = hover.GetComponent<Unit>();
-                }
-                else
-                {
-                    print(hover.name);
-                }
+                print(hover.name);
             }
             else if (activeUnit == unit)
             {
@@ -135,9 +131,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out rayHit, Mathf.Infinity, layerMask))
         {
             hitPoint = rayHit.point;
-            hover = rayHit.collider.gameObject;
-            current.transform.position = hitPoint;
-            /*if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit unit))
+            if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit unit))
             {
                 hover = rayHit.collider.gameObject;
             }
@@ -145,7 +139,7 @@ public class PlayerController : MonoBehaviour
             {
                 hover = null;
                 current.transform.position = hitPoint;
-            }*/
+            }
         }
     }
 
@@ -158,69 +152,92 @@ public class PlayerController : MonoBehaviour
         foreach (TimelineEvent e in events)
         {
             float curTime = e.timelinePosition;
-            if (curTime < time && curTime != 0)
+            if (curTime < time && (curTime != 0 || e.owner != activeUnit))
             {
                 next = e;
                 time = curTime;
             }
         }
+        print(time);
 
-        if (next.owner.TryGetComponent<Unit>(out Unit u))
+        if (next != null)
         {
-            if (u.faction == "Player")
+            if (next.owner.TryGetComponent<Unit>(out Unit u))
             {
-                unit = u;
+                if (u.faction == "Player")
+                {
+                    unit = u;
+                }
+                else
+                {
+                    unit = null;
+                }
             }
         }
 
         foreach (TimelineEvent e in events)
         {
-            if (e.timelinePosition == 0)
+            if (e.timelinePosition == 0 && e.owner == activeUnit)
             {
                 Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
-                if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
-                {
-                    //
-                }
-                else
-                {
-                    GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-
-                    int enemies = 0;
-
-                    foreach (GameObject unit in units)
-                    {
-                        Unit un = unit.GetComponent<Unit>();
-                        if (un.faction == "Enemy")
-                        {
-                            enemies++;
-                        }
-                    }
-
-                    if (enemies > 0)
-                    {
-                        // Begin the next round
-                        foreach (GameObject unit in units)
-                        {
-                            Unit un = unit.GetComponent<Unit>();
-                            un.CreateTimelineEvent();
-                        }
-                    }
-                    else
-                    {
-                        // Check for reinforcements / Next wave?
-                    }
-                }
             }
-            else
+        }
+
+        foreach (TimelineEvent e in events)
+        {
+            if (e.timelinePosition == (int)time)
             {
-                if (e.timelinePosition == (int)time)
-                {
-                    activeUnit = e.owner;
-                }
+                activeUnit = e.owner;
+                print("Active unit: " + activeUnit);
+            }
+            if ((int)time > 0)
+            {
                 e.timelinePosition -= (int)time;
             }
         }
+
+        if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
+        {
+            //
+        }
+        else
+        {
+            GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+            int enemies = 0;
+
+            foreach (GameObject unit in units)
+            {
+                Unit un = unit.GetComponent<Unit>();
+                if (un.faction == "Enemy")
+                {
+                    enemies++;
+                }
+            }
+
+            if (enemies > 0)
+            {
+                // Begin the next round
+                RoundStart();
+            }
+            else
+            {
+                // Check for reinforcements / Next wave?
+            }
+        }
+    }
+
+    public void RoundStart()
+    {
+        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+        foreach (GameObject unit in units)
+        {
+            Unit un = unit.GetComponent<Unit>();
+            un.CreateTimelineEvent();
+        }
+
+        TimelineEventEnd();
     }
 
     private bool MouseOverUI()

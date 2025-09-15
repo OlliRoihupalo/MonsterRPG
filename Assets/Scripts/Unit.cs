@@ -9,6 +9,7 @@ public class Unit : MonoBehaviour
     public GameObject cam;
     //public GameObject sprite;
     public string faction;
+    public float maxHealth;
     public float health;
     public int speed;
 
@@ -19,14 +20,47 @@ public class Unit : MonoBehaviour
     void Start()
     {
         timeline = GameObject.Find("Timeline");
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         cam = Camera.main.gameObject;
-        CreateTimelineEvent();
+        health = maxHealth;
     }
 
     // Update is called once per frame
     void Update()
     {
         //sprite.transform.LookAt(cam.transform.position);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        /*if (health == maxHealth)
+        {
+            canvas.gameObject.SetActive(true);
+        }*/
+        health -= damage;
+        //healthBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * 30f));
+        if (health <= 0)
+        {
+            //animator.SetTrigger("Death");
+            GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+            int enemies = 0;
+
+            foreach (GameObject unit in units)
+            {
+                Unit un = unit.GetComponent<Unit>();
+                if (un.faction == "Enemy")
+                {
+                    enemies++;
+                }
+            }
+
+            if (enemies == 1)
+            {
+                // End combat
+            }
+            Destroy(gameObject);
+        }
     }
 
     public void CreateTimelineEvent()
@@ -38,8 +72,8 @@ public class Unit : MonoBehaviour
 
     public int RollInitiative()
     {
-        int initiative = UnityEngine.Random.Range(1, 6) - speed;
-        if (initiative < 0) initiative = 0;
+        int initiative = UnityEngine.Random.Range(100, 120) - speed;
+        if (initiative < 1) initiative = 1;
         return initiative;
     }
 }
