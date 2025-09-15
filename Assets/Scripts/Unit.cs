@@ -10,7 +10,7 @@ public class Unit : MonoBehaviour
     //public GameObject sprite;
     public string faction;
     public float health;
-    public int initiative;
+    public int speed;
 
     // health, attack, defense, healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel
     // A list of actions that the unit can obtain / use
@@ -38,6 +38,8 @@ public class Unit : MonoBehaviour
 
     public int RollInitiative()
     {
+        int initiative = UnityEngine.Random.Range(1, 6) - speed;
+        if (initiative < 0) initiative = 0;
         return initiative;
     }
 }

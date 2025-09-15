@@ -13,6 +13,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 using static UnityEditor.PlayerSettings;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 //using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerController : MonoBehaviour
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
         //canvas = (Canvas)FindFirstObjectByType(typeof(Canvas));
         hover = null;
         //cam = GameObject.Find("CameraTarget");
-        player = GameObject.Find("Player");
+        player = GameObject.FindGameObjectsWithTag("Player")[0];
         timeline = GameObject.Find("Timeline");
         playerInput = GetComponent<PlayerInput>();
         lookAction = playerInput.actions.FindAction("Cursor");
@@ -183,7 +184,32 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    // Begin the next round
+                    GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+                    int enemies = 0;
+
+                    foreach (GameObject unit in units)
+                    {
+                        Unit un = unit.GetComponent<Unit>();
+                        if (un.faction == "Enemy")
+                        {
+                            enemies++;
+                        }
+                    }
+
+                    if (enemies > 0)
+                    {
+                        // Begin the next round
+                        foreach (GameObject unit in units)
+                        {
+                            Unit un = unit.GetComponent<Unit>();
+                            un.CreateTimelineEvent();
+                        }
+                    }
+                    else
+                    {
+                        // Check for reinforcements / Next wave?
+                    }
                 }
             }
             else
