@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,11 +8,19 @@ public class Unit : MonoBehaviour
     public PlayerController playerController;
     public GameObject timeline;
     public GameObject cam;
+    public Canvas canvas;
     //public GameObject sprite;
     public string faction;
     public float maxHealth;
     public float health;
     public int speed;
+    public GameObject highlight;
+    private RectTransform healthBar;
+    private RectTransform healthDisplay;
+    public RectTransform healthLoss;
+    private float healthLossAmount;
+    public float healthDisplayDelay = 1.2f;
+    public float healthDisplayTimer;
 
     // health, attack, defense, healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel
     // A list of actions that the unit can obtain / use
@@ -21,14 +30,27 @@ public class Unit : MonoBehaviour
     {
         timeline = GameObject.Find("Timeline");
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        canvas = GetComponentInChildren<Canvas>();
+        healthBar = canvas.transform.Find("HealthBar").GetComponent<RectTransform>();
+        healthDisplay = healthBar.transform.Find("HealthDisplay").GetComponent<RectTransform>();
+        healthLoss = healthBar.transform.Find("HealthLossDisplay").GetComponent<RectTransform>();
+        highlight = canvas.transform.Find("Highlight").gameObject;
         cam = Camera.main.gameObject;
         health = maxHealth;
+        healthLossAmount = maxHealth;
+        highlight.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         //sprite.transform.LookAt(cam.transform.position);
+        healthDisplayTimer -= Time.deltaTime;
+        if (healthDisplayTimer <= 0 && healthLoss.sizeDelta.x > healthDisplay.sizeDelta.x)
+        {
+            healthLossAmount -= Time.deltaTime * 30f;
+            healthLoss.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthLossAmount);
+        }
     }
 
     public void TakeDamage(float damage)
@@ -37,8 +59,18 @@ public class Unit : MonoBehaviour
         {
             canvas.gameObject.SetActive(true);
         }*/
+        if (healthDisplayTimer <= 0)
+        {
+            healthLoss.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * 300f));
+        }
         health -= damage;
-        //healthBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * 30f));
+        healthDisplay.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * 300f));
+        /*if (healthLossAmount > (500f - Mathf.Ceil((health / maxHealth) * 500f)))
+        {
+            healthLossAmount = 500f - Mathf.Ceil((health / maxHealth) * 500f);
+        }*/
+        //healthLoss.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthLossAmount);
+        healthDisplayTimer = healthDisplayDelay;
         if (health <= 0)
         {
             //animator.SetTrigger("Death");

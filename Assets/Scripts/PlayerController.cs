@@ -108,6 +108,7 @@ public class PlayerController : MonoBehaviour
             if (hover != null)
             {
                 print(hover.name);
+                hover.GetComponent<Unit>().TakeDamage(20);
             }
             else if (activeUnit == unit)
             {
@@ -134,9 +135,14 @@ public class PlayerController : MonoBehaviour
             if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit unit))
             {
                 hover = rayHit.collider.gameObject;
+                unit.highlight.SetActive(true);
             }
             else
             {
+                if (hover)
+                {
+                    hover.GetComponent<Unit>().highlight.SetActive(false);
+                }
                 hover = null;
                 current.transform.position = hitPoint;
             }
