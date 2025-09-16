@@ -4,25 +4,27 @@ using UnityEngine.AI;
 
 public class Unit : MonoBehaviour
 {
+    //public GameObject sprite;
     public string unitName;
     public PlayerController playerController;
     public GameObject timeline;
     public GameObject cam;
     public Canvas canvas;
-    //public GameObject sprite;
+    public float healthBarLength = 280f;
+    public bool downed = false;
     public string faction;
     public float maxHealth;
     public float health;
     public int speed;
     public GameObject highlight;
+    public float healthDisplayDelay = 1.2f;
     private RectTransform healthBar;
     private RectTransform healthDisplay;
-    public RectTransform healthLoss;
+    private RectTransform healthLoss;
     private float healthLossAmount;
-    public float healthDisplayDelay = 1.2f;
-    public float healthDisplayTimer;
+    private float healthDisplayTimer;
 
-    // health, attack, defense, healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel
+    // health, attack, defense, healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel, level, currentXP, nextLevelXPRequirement
     // A list of actions that the unit can obtain / use
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -36,8 +38,8 @@ public class Unit : MonoBehaviour
         healthLoss = healthBar.transform.Find("HealthLossDisplay").GetComponent<RectTransform>();
         highlight = canvas.transform.Find("Highlight").gameObject;
         cam = Camera.main.gameObject;
-        health = maxHealth;
-        healthLossAmount = maxHealth;
+        health = maxHealth;     // The HP of player units should carry over between battles (So they start the battle already damaged if they took damage in aprevious battle)
+        healthLossAmount = healthBarLength;
         highlight.SetActive(false);
     }
 
@@ -48,7 +50,7 @@ public class Unit : MonoBehaviour
         healthDisplayTimer -= Time.deltaTime;
         if (healthDisplayTimer <= 0 && healthLoss.sizeDelta.x > healthDisplay.sizeDelta.x)
         {
-            healthLossAmount -= Time.deltaTime * 30f;
+            healthLossAmount -= Time.deltaTime * healthBarLength;
             healthLoss.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthLossAmount);
         }
     }
@@ -59,39 +61,52 @@ public class Unit : MonoBehaviour
         {
             canvas.gameObject.SetActive(true);
         }*/
-        if (healthDisplayTimer <= 0)
-        {
-            healthLoss.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * 300f));
-        }
         health -= damage;
-        healthDisplay.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * 300f));
-        /*if (healthLossAmount > (500f - Mathf.Ceil((health / maxHealth) * 500f)))
-        {
-            healthLossAmount = 500f - Mathf.Ceil((health / maxHealth) * 500f);
-        }*/
-        //healthLoss.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthLossAmount);
+        healthDisplay.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * healthBarLength));
         healthDisplayTimer = healthDisplayDelay;
         if (health <= 0)
         {
             //animator.SetTrigger("Death");
-            GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
 
-            int enemies = 0;
+            TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
 
-            foreach (GameObject unit in units)
+            foreach (TimelineEvent e in events)
             {
-                Unit un = unit.GetComponent<Unit>();
-                if (un.faction == "Enemy")
+                if (e.owner == this)
                 {
-                    enemies++;
+                    Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
                 }
             }
 
-            if (enemies == 1)
+            if (faction == "Player")
             {
-                // End combat
+                // Character is downed?
+                downed = true;
+                print("Man down!");
             }
-            Destroy(gameObject);
+            else
+            {
+                GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+                int enemies = 0;
+
+                foreach (GameObject unit in units)
+                {
+                    Unit un = unit.GetComponent<Unit>();
+                    if (un.faction == "Enemy")
+                    {
+                        enemies++;
+                    }
+                }
+
+                if (enemies == 1)
+                {
+                    // End combat
+                    print("Combat over");
+                }
+
+                Destroy(gameObject);
+            }
         }
     }
 

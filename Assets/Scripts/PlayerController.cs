@@ -240,7 +240,10 @@ public class PlayerController : MonoBehaviour
         foreach (GameObject unit in units)
         {
             Unit un = unit.GetComponent<Unit>();
-            un.CreateTimelineEvent();
+            if (!un.downed)
+            {
+                un.CreateTimelineEvent();
+            }
         }
 
         TimelineEventEnd();
