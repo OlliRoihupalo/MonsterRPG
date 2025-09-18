@@ -31,12 +31,14 @@ public class PlayerController : MonoBehaviour
     public Vector2 lookVector;
     public Vector2 moveVector;
     public Unit unit;
+    public bool targeting = false;
     private Vector3 hitPoint;
     private Vector3 movement;
     private InputAction lookAction;
     private InputAction moveAction;
-    //private InputAction rotateAction;
     private InputAction selectAction;
+    private InputAction interactAction;
+    //private InputAction rotateAction;
     //private NavMeshPath path;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -52,6 +54,7 @@ public class PlayerController : MonoBehaviour
         moveAction = playerInput.actions.FindAction("Move");
         //rotateAction = playerInput.actions.FindAction("Rotate");
         selectAction = playerInput.actions.FindAction("Attack");
+        interactAction = playerInput.actions.FindAction("Interact");
         movement = Vector3.zero;
 
         //print("Not Walkable: " + NavMesh.GetAreaFromName("Not Walkable"));
@@ -108,7 +111,10 @@ public class PlayerController : MonoBehaviour
             if (hover != null)
             {
                 print(hover.name);
-                hover.GetComponent<Unit>().TakeDamage(20);
+                if (targeting == true && hover.GetComponent<Unit>().target.activeSelf == true)
+                {
+                    hover.GetComponent<Unit>().TakeDamage(20);
+                }
             }
             else if (activeUnit == unit)
             {
@@ -119,6 +125,11 @@ public class PlayerController : MonoBehaviour
                 //
             }
         }
+
+        /*if (interactAction.WasPerformedThisFrame() && targeting == true)
+        {
+            CancelAction();
+        }*/
     }
 
     void FixedUpdate()
@@ -151,60 +162,64 @@ public class PlayerController : MonoBehaviour
 
     public void TimelineEventEnd()
     {
-        TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
-        TimelineEvent next = null;
-        float time = Mathf.Infinity;
-
-        foreach (TimelineEvent e in events)
+        if (unit != null)
         {
-            float curTime = e.timelinePosition;
-            if (curTime < time && (curTime != 0 || e.owner != activeUnit))
-            {
-                next = e;
-                time = curTime;
-            }
-        }
-        print(time);
-
-        if (next != null)
-        {
-            if (next.owner.TryGetComponent<Unit>(out Unit u))
-            {
-                if (u.faction == "Player")
-                {
-                    unit = u;
-                }
-                else
-                {
-                    unit = null;
-                }
-            }
-        }
-
-        foreach (TimelineEvent e in events)
-        {
-            if (e.timelinePosition == 0 && e.owner == activeUnit)
-            {
-                Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
-            }
-        }
-
-        foreach (TimelineEvent e in events)
-        {
-            if (e.timelinePosition == (int)time)
-            {
-                activeUnit = e.owner;
-                print("Active unit: " + activeUnit);
-            }
-            if ((int)time > 0)
-            {
-                e.timelinePosition -= (int)time;
-            }
+            unit.playerUI.SetActive(false);
         }
 
         if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
         {
-            //
+            TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
+            TimelineEvent next = null;
+            float time = Mathf.Infinity;
+
+            foreach (TimelineEvent e in events)
+            {
+                float curTime = e.timelinePosition;
+                if (curTime < time && (curTime != 0 || e.owner != activeUnit))
+                {
+                    next = e;
+                    time = curTime;
+                }
+            }
+            print(time);
+
+            if (next != null)
+            {
+                if (next.owner.TryGetComponent<Unit>(out Unit u))
+                {
+                    if (u.faction == "Player")
+                    {
+                        unit = u;
+                        unit.playerUI.SetActive(true);
+                    }
+                    else
+                    {
+                        unit = null;
+                    }
+                }
+            }
+
+            foreach (TimelineEvent e in events)
+            {
+                if (e.timelinePosition == 0 && e.owner == activeUnit)
+                {
+                    Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
+                }
+            }
+
+            foreach (TimelineEvent e in events)
+            {
+                if (e.timelinePosition == (int)time)
+                {
+                    activeUnit = e.owner;
+                    print("Active unit: " + activeUnit);
+                }
+                if ((int)time > 0)
+                {
+                    e.timelinePosition -= (int)time;
+                }
+            }
         }
         else
         {
@@ -247,6 +262,19 @@ public class PlayerController : MonoBehaviour
         }
 
         TimelineEventEnd();
+    }
+
+    public void CancelAction()
+    {
+        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+        foreach (GameObject unit in units)
+        {
+            Unit un = unit.GetComponent<Unit>();
+            un.target.SetActive(false);
+        }
+
+        targeting = false;
     }
 
     private bool MouseOverUI()

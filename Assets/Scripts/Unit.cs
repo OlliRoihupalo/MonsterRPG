@@ -1,6 +1,7 @@
 using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Unit : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class Unit : MonoBehaviour
     public PlayerController playerController;
     public GameObject timeline;
     public GameObject cam;
-    public Canvas canvas;
+    public Canvas unitUI;
+    public GameObject playerUI;
     public float healthBarLength = 280f;
     public bool downed = false;
     public string faction;
@@ -17,7 +19,9 @@ public class Unit : MonoBehaviour
     public float health;
     public int speed;
     public GameObject highlight;
+    public GameObject target;
     public float healthDisplayDelay = 1.2f;
+    public TMPro.TextMeshProUGUI nameDisplay;
     private RectTransform healthBar;
     private RectTransform healthDisplay;
     private RectTransform healthLoss;
@@ -32,15 +36,21 @@ public class Unit : MonoBehaviour
     {
         timeline = GameObject.Find("Timeline");
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
-        canvas = GetComponentInChildren<Canvas>();
-        healthBar = canvas.transform.Find("HealthBar").GetComponent<RectTransform>();
+        unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
+        playerUI = transform.Find("PlayerUI").gameObject;
+        healthBar = unitUI.transform.Find("HealthBar").GetComponent<RectTransform>();
         healthDisplay = healthBar.transform.Find("HealthDisplay").GetComponent<RectTransform>();
         healthLoss = healthBar.transform.Find("HealthLossDisplay").GetComponent<RectTransform>();
-        highlight = canvas.transform.Find("Highlight").gameObject;
+        highlight = unitUI.transform.Find("Highlight").gameObject;
+        target = unitUI.transform.Find("Target").gameObject;
+        nameDisplay = playerUI.transform.Find("NameDisplay").GetComponent<TMPro.TextMeshProUGUI>();
+        nameDisplay.text = gameObject.name;
         cam = Camera.main.gameObject;
         health = maxHealth;     // The HP of player units should carry over between battles (So they start the battle already damaged if they took damage in aprevious battle)
         healthLossAmount = healthBarLength;
         highlight.SetActive(false);
+        target.SetActive(false);
+        playerUI.SetActive(false);
     }
 
     // Update is called once per frame
@@ -122,5 +132,40 @@ public class Unit : MonoBehaviour
         int initiative = UnityEngine.Random.Range(100, 120) - speed;
         if (initiative < 1) initiative = 1;
         return initiative;
+    }
+
+    public void BeginAction(string targetGroup) // Should probably create a new script for actions and give that script as the parameter
+    {
+        playerController.targeting = true;
+        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+        if (targetGroup == "Ally" || targetGroup == "All")
+        {
+            foreach (GameObject unit in units)
+            {
+                Unit un = unit.GetComponent<Unit>();
+                if (un.faction == faction)
+                {
+                    un.target.SetActive(true);
+                }
+            }
+        }
+
+        if (targetGroup == "Enemy" || targetGroup == "All")
+        {
+            foreach (GameObject unit in units)
+            {
+                Unit un = unit.GetComponent<Unit>();
+                if (un.faction != faction)
+                {
+                    un.target.SetActive(true);
+                }
+            }
+        }
+    }
+
+    public void PerformAction(Unit[] targets, string effect, float value)
+    {
+        //GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
     }
 }
