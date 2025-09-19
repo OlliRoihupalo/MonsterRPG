@@ -15,6 +15,7 @@ public class Unit : MonoBehaviour
     public float healthBarLength = 280f;
     public bool downed = false;
     public string faction;
+    public float attackPower;
     public float maxHealth;
     public float health;
     public int speed;
@@ -22,6 +23,7 @@ public class Unit : MonoBehaviour
     public GameObject target;
     public float healthDisplayDelay = 1.2f;
     public TMPro.TextMeshProUGUI nameDisplay;
+    public CombatAction currentAction;
     private RectTransform healthBar;
     private RectTransform healthDisplay;
     private RectTransform healthLoss;
@@ -29,7 +31,7 @@ public class Unit : MonoBehaviour
     private float healthDisplayTimer;
 
     // health, attack, defense, healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel, level, currentXP, nextLevelXPRequirement
-    // A list of actions that the unit can obtain / use
+    // private CombatAction[] skillList; // A list of all actions that the unit can learn (through levelusp etcc)
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -134,12 +136,16 @@ public class Unit : MonoBehaviour
         return initiative;
     }
 
-    public void BeginAction(string targetGroup) // Should probably create a new script for actions and give that script as the parameter
+
+    public void BeginAction(CombatAction combatAction)
     {
+        combatAction.user = this;
+        currentAction = combatAction;
+
         playerController.targeting = true;
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
 
-        if (targetGroup == "Ally" || targetGroup == "All")
+        if (combatAction.targetGroup == "Ally" || combatAction.targetGroup == "All")
         {
             foreach (GameObject unit in units)
             {
@@ -151,7 +157,7 @@ public class Unit : MonoBehaviour
             }
         }
 
-        if (targetGroup == "Enemy" || targetGroup == "All")
+        if (combatAction.targetGroup == "Enemy" || combatAction.targetGroup == "All")
         {
             foreach (GameObject unit in units)
             {
@@ -164,8 +170,10 @@ public class Unit : MonoBehaviour
         }
     }
 
+    /*
     public void PerformAction(Unit[] targets, string effect, float value)
     {
         //GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
     }
+    */
 }

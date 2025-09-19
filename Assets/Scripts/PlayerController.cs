@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     public GameObject player;
     public Unit activeUnit;
     public PlayerInput playerInput;
+
+    [Range(0.1f, 100f)] // This adds a slider to the editor
     public float cameraSpeed;
     //public float cameraRotation;
     //public float cameraRotationSpeed;
@@ -113,7 +115,34 @@ public class PlayerController : MonoBehaviour
                 print(hover.name);
                 if (targeting == true && hover.GetComponent<Unit>().target.activeSelf == true)
                 {
+                    if (unit.currentAction.cleave == true)
+                    {
+                        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+                        Unit[] targets = new Unit[units.Length];
+                        int i = 0;
+
+                        foreach (GameObject unit in units)
+                        {
+                            Unit un = unit.GetComponent<Unit>();
+                            if (un.target.activeSelf == true)
+                            {
+                                targets[i] = un;
+                                i++;
+                            }
+                        }
+                        unit.currentAction.Perform(targets);
+                    }
+                    else
+                    {
+                        Unit[] targets = new Unit[1];
+                        targets[0] = hover.GetComponent<Unit>();
+                        unit.currentAction.Perform(targets);
+                    }
+
+                    /*
                     hover.GetComponent<Unit>().TakeDamage(20);
+                    */
+                    CancelAction();
                 }
             }
             else if (activeUnit == unit)
