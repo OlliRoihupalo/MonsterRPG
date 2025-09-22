@@ -4,15 +4,51 @@ using UnityEngine;
 public class CombatAction : ScriptableObject
 {
     public string actionName;
+    public string description;
     public string[] actionTags;
     public int levelObtained;
     public string targetGroup;
     public bool cleave;
+    public string usesStat;
+    public float statMultiplier;
+    public float statValue;
     public Unit user;
     //public ParticleSystem ps;
 
     public virtual void Perform(Unit[] targets)
     {
         Debug.Log(targets.Length);
+    }
+
+    public void DetermineStat()
+    {
+        if (usesStat != null)
+        {
+            switch (usesStat)
+            {
+                case "attackPower":
+                    statValue = user.attackPower;
+                    break;
+                case "defense":
+                    statValue = user.defense;
+                    break;
+                case "maxHealth":
+                    statValue = user.maxHealth;
+                    break;
+                case "health":
+                    statValue = user.health;
+                    break;
+                case "speed":
+                    statValue = user.speed;
+                    break;
+                default:
+                    // code block
+                    break;
+            }
+        }
+        else
+        {
+            statValue = 0;
+        }
     }
 }

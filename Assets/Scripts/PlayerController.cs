@@ -172,16 +172,45 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out rayHit, Mathf.Infinity, layerMask))
         {
             hitPoint = rayHit.point;
-            if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit unit))
+            if (rayHit.collider.gameObject.TryGetComponent<Unit>(out Unit u))
             {
                 hover = rayHit.collider.gameObject;
-                unit.highlight.SetActive(true);
+                if (unit != null && unit.currentAction != null)
+                {
+                    if (unit.currentAction.cleave == true)
+                    {
+                        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+                        foreach (GameObject uni in units)
+                        {
+                            Unit un = uni.GetComponent<Unit>();
+                            if (un.target.activeSelf == true)
+                            {
+                                un.highlight.SetActive(true);
+                            }
+                        }
+                    }
+                }
+                /*
+                
+                */
+                u.highlight.SetActive(true);
             }
             else
             {
                 if (hover)
                 {
-                    hover.GetComponent<Unit>().highlight.SetActive(false);
+                    //hover.GetComponent<Unit>().highlight.SetActive(false);
+                    GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+                    foreach (GameObject uni in units)
+                    {
+                        Unit un = uni.GetComponent<Unit>();
+                        if (un.highlight.activeSelf == true)
+                        {
+                            un.highlight.SetActive(false);
+                        }
+                    }
                 }
                 hover = null;
                 current.transform.position = hitPoint;
@@ -303,6 +332,7 @@ public class PlayerController : MonoBehaviour
             un.target.SetActive(false);
         }
 
+        unit.currentAction = null;
         targeting = false;
     }
 

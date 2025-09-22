@@ -1,7 +1,11 @@
 using Mono.Cecil;
+using NUnit.Framework.Internal;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEditor;
+using UnityEngine.UIElements;
 using UnityEngine.AI;
-using static UnityEngine.Rendering.DebugUI;
+//using static UnityEngine.Rendering.DebugUI;
 
 public class Unit : MonoBehaviour
 {
@@ -15,12 +19,16 @@ public class Unit : MonoBehaviour
     public float healthBarLength = 280f;
     public bool downed = false;
     public string faction;
+    public int level;
     public float attackPower;
+    public float defense;
     public float maxHealth;
     public float health;
     public int speed;
+    public CombatAction[] skillList; // A list of all actions that the unit can learn (through levelusp etcc)
     public GameObject highlight;
     public GameObject target;
+    public GameObject skills;
     public float healthDisplayDelay = 1.2f;
     public TMPro.TextMeshProUGUI nameDisplay;
     public CombatAction currentAction;
@@ -30,8 +38,7 @@ public class Unit : MonoBehaviour
     private float healthLossAmount;
     private float healthDisplayTimer;
 
-    // health, attack, defense, healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel, level, currentXP, nextLevelXPRequirement
-    // private CombatAction[] skillList; // A list of all actions that the unit can learn (through levelusp etcc)
+    // healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel, level, currentXP, nextLevelXPRequirement
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,6 +47,7 @@ public class Unit : MonoBehaviour
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
         playerUI = transform.Find("PlayerUI").gameObject;
+        //skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
         healthBar = unitUI.transform.Find("HealthBar").GetComponent<RectTransform>();
         healthDisplay = healthBar.transform.Find("HealthDisplay").GetComponent<RectTransform>();
         healthLoss = healthBar.transform.Find("HealthLossDisplay").GetComponent<RectTransform>();
@@ -53,6 +61,19 @@ public class Unit : MonoBehaviour
         highlight.SetActive(false);
         target.SetActive(false);
         playerUI.SetActive(false);
+
+        foreach (CombatAction ca in skillList)
+        {
+            if (ca.levelObtained <= level)
+            {
+                //GameObject o = new GameObject();
+                //UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button();
+                //o.AddComponent(Button) = new Button;
+                //button.parent = playerUI;
+                //button.clicked += BeginAction(ca);
+                //button.RegisterCallback<ClickEvent, CombatAction>(BeginAction, ca);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -135,7 +156,6 @@ public class Unit : MonoBehaviour
         if (initiative < 1) initiative = 1;
         return initiative;
     }
-
 
     public void BeginAction(CombatAction combatAction)
     {

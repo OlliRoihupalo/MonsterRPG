@@ -5,11 +5,13 @@ public class BasicAttack : CombatAction
 {
     public override void Perform(Unit[] targets)
     {
+        DetermineStat();
+
         foreach (Unit target in targets)
         {
             if (target != null)
             {
-                target.TakeDamage(user.attackPower);
+                target.TakeDamage(statValue * statMultiplier);
             }
         }
     }
