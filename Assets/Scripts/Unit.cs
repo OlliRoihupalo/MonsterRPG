@@ -1,10 +1,12 @@
 using Mono.Cecil;
 using NUnit.Framework.Internal;
+using System.Drawing;
 using Unity.VisualScripting;
-using UnityEngine;
 using UnityEditor;
-using UnityEngine.UIElements;
+using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
+using UnityEngine.UIElements;
 //using static UnityEngine.Rendering.DebugUI;
 
 public class Unit : MonoBehaviour
@@ -25,10 +27,11 @@ public class Unit : MonoBehaviour
     public float maxHealth;
     public float health;
     public int speed;
-    public CombatAction[] skillList; // A list of all actions that the unit can learn (through levelusp etcc)
+    public CombatAction[] skillList; // A list of all actions that the unit can learn (through levelusp etc)
     public GameObject highlight;
     public GameObject target;
     public GameObject skills;
+    public GameObject buttonPrefab;
     public float healthDisplayDelay = 1.2f;
     public TMPro.TextMeshProUGUI nameDisplay;
     public CombatAction currentAction;
@@ -47,7 +50,7 @@ public class Unit : MonoBehaviour
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
         playerUI = transform.Find("PlayerUI").gameObject;
-        //skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
+        skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
         healthBar = unitUI.transform.Find("HealthBar").GetComponent<RectTransform>();
         healthDisplay = healthBar.transform.Find("HealthDisplay").GetComponent<RectTransform>();
         healthLoss = healthBar.transform.Find("HealthLossDisplay").GetComponent<RectTransform>();
@@ -62,18 +65,7 @@ public class Unit : MonoBehaviour
         target.SetActive(false);
         playerUI.SetActive(false);
 
-        foreach (CombatAction ca in skillList)
-        {
-            if (ca.levelObtained <= level)
-            {
-                //GameObject o = new GameObject();
-                //UnityEngine.UIElements.Button button = new UnityEngine.UIElements.Button();
-                //o.AddComponent(Button) = new Button;
-                //button.parent = playerUI;
-                //button.clicked += BeginAction(ca);
-                //button.RegisterCallback<ClickEvent, CombatAction>(BeginAction, ca);
-            }
-        }
+        CreateSkillList();
     }
 
     // Update is called once per frame
@@ -155,6 +147,30 @@ public class Unit : MonoBehaviour
         int initiative = UnityEngine.Random.Range(100, 120) - speed;
         if (initiative < 1) initiative = 1;
         return initiative;
+    }
+
+    public void CreateSkillList()
+    {
+        int h = 0;
+        foreach (CombatAction ca in skillList)
+        {
+            if (ca.levelObtained <= level)
+            {
+                GameObject o = Instantiate(buttonPrefab, skills.transform);
+
+                UnityEngine.UI.Button button = o.GetComponent<UnityEngine.UI.Button>();
+                button.onClick.AddListener(delegate () { BeginAction(ca); });
+
+                TMPro.TextMeshProUGUI buttonText = o.transform.Find("Text (TMP)").GetComponent<TMPro.TextMeshProUGUI>();
+                buttonText.text = ca.actionName;
+
+                RectTransform rec = o.GetComponent<RectTransform>();
+                rec.anchoredPosition = new Vector2(0, 0 - ((rec.rect.height / 2) + (rec.rect.height * h)));
+                h++;
+            }
+        }
+        RectTransform s = skills.GetComponent<RectTransform>();
+        s.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h * 30);
     }
 
     public void BeginAction(CombatAction combatAction)
