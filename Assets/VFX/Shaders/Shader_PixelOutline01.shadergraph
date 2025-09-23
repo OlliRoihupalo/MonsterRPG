@@ -11,12 +11,6 @@
         },
         {
             "m_Id": "f301378e623f4244bbecc54f3dcc5986"
-        },
-        {
-            "m_Id": "5f94f0bd9a1847b4bc5c4883ede4196d"
-        },
-        {
-            "m_Id": "b8dfc7d3f15f403dbf7cba14e0dffce0"
         }
     ],
     "m_Keywords": [],
@@ -284,8 +278,8 @@
     ],
     "m_VertexContext": {
         "m_Position": {
-            "x": 179.9999542236328,
-            "y": -104.99999237060547
+            "x": -411.00006103515627,
+            "y": -13.000012397766114
         },
         "m_Blocks": [
             {
@@ -301,8 +295,8 @@
     },
     "m_FragmentContext": {
         "m_Position": {
-            "x": 179.9999542236328,
-            "y": 95.0000228881836
+            "x": -411.00006103515627,
+            "y": 187.00001525878907
         },
         "m_Blocks": [
             {
@@ -1312,46 +1306,6 @@
 }
 
 {
-    "m_SGVersion": 1,
-    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
-    "m_ObjectId": "5f94f0bd9a1847b4bc5c4883ede4196d",
-    "m_Guid": {
-        "m_GuidSerialized": "01ef75e4-ff57-4001-89c6-45f92a0c1d70"
-    },
-    "m_Name": "FresnelPower",
-    "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "FresnelPower",
-    "m_DefaultReferenceName": "_FresnelPower",
-    "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
-    "m_UseCustomSlotLabel": false,
-    "m_CustomSlotLabel": "",
-    "m_DismissedVersion": 0,
-    "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
-    "m_Hidden": false,
-    "m_PerRendererData": false,
-    "m_customAttributes": [],
-    "m_Value": 0.0,
-    "m_FloatType": 0,
-    "m_RangeValues": {
-        "x": 0.0,
-        "y": 1.0
-    },
-    "m_SliderType": 0,
-    "m_SliderPower": 3.0,
-    "m_EnumType": 0,
-    "m_CSharpEnumString": "",
-    "m_EnumNames": [
-        "Default"
-    ],
-    "m_EnumValues": [
-        0
-    ]
-}
-
-{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "6357b7d304824a029d127b9254eb86ba",
@@ -1471,7 +1425,7 @@
     "m_PerRendererData": false,
     "m_customAttributes": [],
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"cfd213693363865428d368b767051b37\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"5bdc01e68f322e149be244eb88da6eb9\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -1574,12 +1528,6 @@
         },
         {
             "m_Id": "f301378e623f4244bbecc54f3dcc5986"
-        },
-        {
-            "m_Id": "5f94f0bd9a1847b4bc5c4883ede4196d"
-        },
-        {
-            "m_Id": "b8dfc7d3f15f403dbf7cba14e0dffce0"
         }
     ]
 }
@@ -1780,38 +1728,6 @@
         "z": 0.0,
         "w": 0.0
     }
-}
-
-{
-    "m_SGVersion": 3,
-    "m_Type": "UnityEditor.ShaderGraph.Internal.ColorShaderProperty",
-    "m_ObjectId": "b8dfc7d3f15f403dbf7cba14e0dffce0",
-    "m_Guid": {
-        "m_GuidSerialized": "cf70b88c-239c-489f-b5fd-9ac973d2212a"
-    },
-    "m_Name": "BlackOutline",
-    "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "BlackOutline",
-    "m_DefaultReferenceName": "_BlackOutline",
-    "m_OverrideReferenceName": "",
-    "m_GeneratePropertyBlock": true,
-    "m_UseCustomSlotLabel": false,
-    "m_CustomSlotLabel": "",
-    "m_DismissedVersion": 0,
-    "m_Precision": 0,
-    "overrideHLSLDeclaration": false,
-    "hlslDeclarationOverride": 0,
-    "m_Hidden": false,
-    "m_PerRendererData": false,
-    "m_customAttributes": [],
-    "m_Value": {
-        "r": 0.0,
-        "g": 0.0,
-        "b": 0.0,
-        "a": 1.0
-    },
-    "isMainColor": false,
-    "m_ColorMode": 0
 }
 
 {
@@ -2050,7 +1966,7 @@
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
     "m_CustomEditorGUI": "",
-    "m_SupportVFX": false
+    "m_SupportVFX": true
 }
 
 {

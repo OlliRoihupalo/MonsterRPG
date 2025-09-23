@@ -233,7 +233,7 @@
                 "m_Node": {
                     "m_Id": "70c8e2dcac374de2a65f3d14ab9ee8f1"
                 },
-                "m_SlotId": 7
+                "m_SlotId": 0
             },
             "m_InputSlot": {
                 "m_Node": {
@@ -563,9 +563,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -1016.0,
-            "y": -11.0,
-            "width": 129.0,
+            "x": -1040.0001220703125,
+            "y": -391.00006103515627,
+            "width": 129.00006103515626,
             "height": 34.0
         }
     },
@@ -1878,10 +1878,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -867.0,
-            "y": 4.000005722045898,
-            "width": 208.00006103515626,
-            "height": 433.0
+            "x": -891.0000610351563,
+            "y": -376.00006103515627,
+            "width": 208.0,
+            "height": 433.0000305175781
         }
     },
     "m_Slots": [
@@ -2272,7 +2272,7 @@
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
     "m_CustomEditorGUI": "",
-    "m_SupportVFX": false
+    "m_SupportVFX": true
 }
 
 {
@@ -2393,7 +2393,7 @@
     "m_Hidden": false,
     "m_PerRendererData": false,
     "m_customAttributes": [],
-    "m_Value": 1000.0,
+    "m_Value": 32.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
