@@ -57,7 +57,7 @@ public class Unit : MonoBehaviour
         highlight = unitUI.transform.Find("Highlight").gameObject;
         target = unitUI.transform.Find("Target").gameObject;
         nameDisplay = playerUI.transform.Find("NameDisplay").GetComponent<TMPro.TextMeshProUGUI>();
-        nameDisplay.text = gameObject.name;
+        nameDisplay.text = unitName;
         cam = Camera.main.gameObject;
         health = maxHealth;     // The HP of player units should carry over between battles (So they start the battle already damaged if they took damage in aprevious battle)
         healthLossAmount = healthBarLength;
