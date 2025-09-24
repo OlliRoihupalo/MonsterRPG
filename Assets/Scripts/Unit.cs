@@ -11,7 +11,7 @@ using UnityEngine.UIElements;
 
 public class Unit : MonoBehaviour
 {
-    //public GameObject sprite;
+    public GameObject sprite;
     public string unitName;
     public PlayerController playerController;
     public GameObject timeline;
@@ -48,6 +48,7 @@ public class Unit : MonoBehaviour
     {
         timeline = GameObject.Find("Timeline");
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        sprite = transform.Find("Sprite").gameObject;
         unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
         playerUI = transform.Find("PlayerUI").gameObject;
         skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
@@ -71,7 +72,18 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //sprite.transform.LookAt(cam.transform.position);
+        RectTransform rectTransform = highlight.GetComponent<RectTransform>();
+        if (faction == "Player")
+        {
+            sprite.transform.localScale = new Vector3(-1, 1, 1);
+            rectTransform.localScale = new Vector3(-1, 1, 1);
+        }
+        else
+        {
+            sprite.transform.localScale = new Vector3(1, 1, 1);
+            rectTransform.localScale = new Vector3(1, 1, 1);
+        }
+
         healthDisplayTimer -= Time.deltaTime;
         if (healthDisplayTimer <= 0 && healthLoss.sizeDelta.x > healthDisplay.sizeDelta.x)
         {
