@@ -14,5 +14,6 @@ public class BasicAttack : CombatAction
                 target.TakeDamage(statValue * statMultiplier);
             }
         }
+        user = null;
     }
 }

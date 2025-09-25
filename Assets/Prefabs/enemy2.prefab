@@ -1567,7 +1567,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5853598211709525427}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999997
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1583,6 +1583,7 @@ GameObject:
   - component: {fileID: 1163665447580201894}
   - component: {fileID: 2562354799715107641}
   - component: {fileID: 6557328136698877343}
+  - component: {fileID: 1580562782138101717}
   m_Layer: 0
   m_Name: enemy2
   m_TagString: Unit
@@ -1668,3 +1669,19 @@ MonoBehaviour:
   healthDisplayDelay: 1.2
   nameDisplay: {fileID: 0}
   currentAction: {fileID: 0}
+  animator: {fileID: 0}
+--- !u!114 &1580562782138101717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7676739863343539402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b87e84d11a76728479a241abf3e58249, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  playerController: {fileID: 0}
+  unit: {fileID: 0}
+  actionDelay: 1.2

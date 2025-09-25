@@ -35,6 +35,7 @@ public class Unit : MonoBehaviour
     public float healthDisplayDelay = 1.2f;
     public TMPro.TextMeshProUGUI nameDisplay;
     public CombatAction currentAction;
+    public Animator animator;
     private RectTransform healthBar;
     private RectTransform healthDisplay;
     private RectTransform healthLoss;
@@ -48,7 +49,8 @@ public class Unit : MonoBehaviour
     {
         timeline = GameObject.Find("Timeline");
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
-        sprite = transform.Find("Sprite").gameObject;
+        sprite = transform.Find("sprite root").gameObject;
+        animator = sprite.transform.Find("Sprite").GetComponent<Animator>();
         unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
         playerUI = transform.Find("PlayerUI").gameObject;
         skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
@@ -104,6 +106,7 @@ public class Unit : MonoBehaviour
         if (health <= 0)
         {
             //animator.SetTrigger("Death");
+            GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
 
             TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
 
@@ -120,11 +123,28 @@ public class Unit : MonoBehaviour
                 // Character is downed?
                 downed = true;
                 print("Man down!");
+
+                int alive = 0;
+
+                foreach (GameObject unit in units)
+                {
+                    Unit un = unit.GetComponent<Unit>();
+                    if (un.faction == "Player" && un.downed == false)
+                    {
+                        alive++;
+                    }
+                }
+
+                if (alive == 0)
+                {
+                    // End combat
+                    playerController.inCombat = false;
+                    print("Combat over");
+                }
+
             }
             else
             {
-                GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-
                 int enemies = 0;
 
                 foreach (GameObject unit in units)
@@ -139,6 +159,7 @@ public class Unit : MonoBehaviour
                 if (enemies == 1)
                 {
                     // End combat
+                    playerController.inCombat = false;
                     print("Combat over");
                 }
 
