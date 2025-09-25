@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 moveVector;
     public Unit unit;
     public bool targeting = false;
+    public bool inCombat = false;
     private Vector3 hitPoint;
     private Vector3 movement;
     private InputAction lookAction;
@@ -49,7 +50,7 @@ public class PlayerController : MonoBehaviour
         //canvas = (Canvas)FindFirstObjectByType(typeof(Canvas));
         hover = null;
         //cam = GameObject.Find("CameraTarget");
-        player = GameObject.FindWithTag("Player");
+        player = GameObject.Find("Player");
         timeline = GameObject.Find("Timeline");
         playerInput = GetComponent<PlayerInput>();
         lookAction = playerInput.actions.FindAction("Cursor");
@@ -93,7 +94,7 @@ public class PlayerController : MonoBehaviour
         //cam.transform.RotateAround(cam.transform.position, Vector3.up, cameraRotation * cameraRotationSpeed * Time.fixedDeltaTime);
         movement = new Vector3(moveVector.x, moveVector.y, 0);
         
-        if (player != null)
+        if (inCombat == false)
         {
             player.transform.Translate(cameraSpeed * Time.deltaTime * movement);
         }
@@ -138,11 +139,8 @@ public class PlayerController : MonoBehaviour
                         targets[0] = hover.GetComponent<Unit>();
                         unit.currentAction.Perform(targets);
                     }
-
-                    /*
-                    hover.GetComponent<Unit>().TakeDamage(20);
-                    */
                     CancelAction();
+                    TimelineEventEnd();
                 }
             }
             else if (activeUnit == unit)
@@ -165,7 +163,6 @@ public class PlayerController : MonoBehaviour
     {
         //Create a ray from the Mouse click position
         Ray ray = Camera.main.ScreenPointToRay(lookVector);//Input.mousePosition);
-        //NavMeshHit hit;
         RaycastHit rayHit;
         LayerMask layerMask = LayerMask.GetMask("Default");
 
@@ -191,16 +188,12 @@ public class PlayerController : MonoBehaviour
                         }
                     }
                 }
-                /*
-                
-                */
                 u.highlight.SetActive(true);
             }
             else
             {
                 if (hover)
                 {
-                    //hover.GetComponent<Unit>().highlight.SetActive(false);
                     GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
 
                     foreach (GameObject uni in units)
