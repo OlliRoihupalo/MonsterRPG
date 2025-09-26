@@ -3,6 +3,7 @@
 //using Unity.VisualScripting;
 //using UnityEngine.UIElements;
 //using static UnityEditor.PlayerSettings;
+using System;
 using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -35,6 +36,12 @@ public class PlayerController : MonoBehaviour
     public Unit unit;
     public bool targeting = false;
     public bool inCombat = false;
+    public GameObject combatArea;
+    public Vector3 lastPosition;
+    public GameObject[] enemyList;
+    public GameObject[] playerUnits;
+    public Transform[] playerPositions;
+    public Transform[] enemyPositions;
     private Vector3 hitPoint;
     private Vector3 movement;
     private InputAction lookAction;
@@ -51,6 +58,9 @@ public class PlayerController : MonoBehaviour
         hover = null;
         //cam = GameObject.Find("CameraTarget");
         player = GameObject.Find("Player");
+        combatArea = GameObject.Find("CombatArea");
+        playerPositions = GameObject.Find("PlayerSideSlots").GetComponentsInChildren<Transform>();
+        enemyPositions = GameObject.Find("EnemySideSlots").GetComponentsInChildren<Transform>();
         timeline = GameObject.Find("Timeline");
         playerInput = GetComponent<PlayerInput>();
         lookAction = playerInput.actions.FindAction("Cursor");
@@ -241,8 +251,16 @@ public class PlayerController : MonoBehaviour
                 {
                     if (u.faction == "Player")
                     {
-                        unit = u;
-                        unit.playerUI.SetActive(true);
+                        if (u.downed)
+                        {
+                            Destroy(next);
+                            unit = null;
+                        }
+                        else
+                        {
+                            unit = u;
+                            unit.playerUI.SetActive(true);
+                        }
                     }
                     else
                     {
@@ -327,6 +345,59 @@ public class PlayerController : MonoBehaviour
 
         unit.currentAction = null;
         targeting = false;
+    }
+
+    public GameObject[] CreateRandomEnemies()
+    {
+        int numberOfEnemies = 3;
+        GameObject[] enemies = new GameObject[numberOfEnemies];
+
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            enemies[i] = enemyList[UnityEngine.Random.Range(0, enemyList.Length)];
+        }
+        return enemies;
+    }
+
+    public void BeginCombat(GameObject[] enemies)
+    {
+        int numberOfEnemies = enemies.Length;
+        int numberOfPlayerUnits = playerUnits.Length;
+
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            GameObject enemy = Instantiate(enemies[i], enemyPositions[i + 1].position, Quaternion.identity);
+        }
+
+        for (int i = 0; i < numberOfPlayerUnits; i++)
+        {
+            GameObject playerUnit = Instantiate(playerUnits[i], playerPositions[i + 1].position, Quaternion.identity);
+            playerUnit.GetComponent<Unit>().faction = "Player";
+        }
+
+        inCombat = true;
+        lastPosition = player.transform.position;
+        player.transform.position = combatArea.transform.position + Vector3.forward;
+
+        RoundStart();
+    }
+
+    public void EndCombat()
+    {
+        player.transform.position = lastPosition;
+        inCombat = false;
+
+        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+
+        foreach (GameObject unit in units)
+        {
+            Destroy(unit);
+        }
+    }
+
+    public void RandomEncounter()
+    {
+        BeginCombat(CreateRandomEnemies());
     }
 
     private bool MouseOverUI()

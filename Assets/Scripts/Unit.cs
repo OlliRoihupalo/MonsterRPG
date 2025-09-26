@@ -52,7 +52,7 @@ public class Unit : MonoBehaviour
         sprite = transform.Find("sprite root").gameObject;
         animator = sprite.transform.Find("Sprite").GetComponent<Animator>();
         unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
-        playerUI = transform.Find("PlayerUI").gameObject;
+        //playerUI = transform.Find("PlayerUI").gameObject;
         skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
         healthBar = unitUI.transform.Find("HealthBar").GetComponent<RectTransform>();
         healthDisplay = healthBar.transform.Find("HealthDisplay").GetComponent<RectTransform>();
@@ -115,6 +115,14 @@ public class Unit : MonoBehaviour
                 if (e.owner == this)
                 {
                     Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
+                    /*if (e.timelinePosition == 0)
+                    {
+                        playerController.TimelineEventEnd();
+                    }
+                    else
+                    {
+                        Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
+                    }*/
                 }
             }
 
@@ -138,8 +146,7 @@ public class Unit : MonoBehaviour
                 if (alive == 0)
                 {
                     // End combat
-                    playerController.inCombat = false;
-                    print("Combat over");
+                    playerController.EndCombat();
                 }
 
             }
@@ -159,8 +166,7 @@ public class Unit : MonoBehaviour
                 if (enemies == 1)
                 {
                     // End combat
-                    playerController.inCombat = false;
-                    print("Combat over");
+                    playerController.EndCombat();
                 }
 
                 Destroy(gameObject);
@@ -170,6 +176,10 @@ public class Unit : MonoBehaviour
 
     public void CreateTimelineEvent()
     {
+        if (timeline == null)
+        {
+            timeline = GameObject.Find("Timeline");
+        }
         TimelineEvent te = timeline.AddComponent<TimelineEvent>();
         te.timelinePosition = RollInitiative();
         te.owner = this;
@@ -238,11 +248,4 @@ public class Unit : MonoBehaviour
             }
         }
     }
-
-    /*
-    public void PerformAction(Unit[] targets, string effect, float value)
-    {
-        //GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-    }
-    */
 }

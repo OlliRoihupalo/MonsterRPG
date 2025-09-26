@@ -76,7 +76,7 @@ public class EnemyAI : MonoBehaviour
             foreach (GameObject uni in units)
             {
                 Unit u = uni.GetComponent<Unit>();
-                if (u.faction != unit.faction)
+                if (u.faction != unit.faction && !u.downed)
                 {
                     enemies[temp] = u;
                     temp++;
@@ -140,6 +140,7 @@ public class EnemyAI : MonoBehaviour
     public void PerformActionOnTargets(CombatAction action, GameObject[] unitList, Unit primaryTarget)
     {
         action.user = unit;
+        print(unit.unitName + " uses " + action.actionName + "!");
         if (action.cleave == true)
         {
             Unit[] targets = new Unit[unitList.Length];

@@ -973,7 +973,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 6181269393663400419}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999997
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1459,12 +1459,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
   sprite: {fileID: 0}
-  unitName: 
+  unitName: Imp
   playerController: {fileID: 0}
   timeline: {fileID: 0}
   cam: {fileID: 0}
   unitUI: {fileID: 0}
-  playerUI: {fileID: 0}
+  playerUI: {fileID: 2750252818707944730}
   healthBarLength: 280
   downed: 0
   faction: Enemy

@@ -399,7 +399,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4532834331717447944}
   m_Direction: 0
   m_Value: 0
-  m_Size: 0.9999997
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1614,7 +1614,7 @@ MonoBehaviour:
   timeline: {fileID: 0}
   cam: {fileID: 0}
   unitUI: {fileID: 0}
-  playerUI: {fileID: 0}
+  playerUI: {fileID: 4530178559392224682}
   healthBarLength: 280
   downed: 0
   faction: Enemy
