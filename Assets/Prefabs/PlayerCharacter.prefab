@@ -211,7 +211,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 4970254779797429726}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.9999997
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1533,7 +1533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 2100000, guid: 3688472b9ab765d489f392071270b5c3, type: 2}
+  m_Material: {fileID: 2100000, guid: 71d832b2ab25ed34eb9dd274b3e8fc82, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -1647,6 +1647,7 @@ MonoBehaviour:
   healthDisplayDelay: 1.2
   nameDisplay: {fileID: 0}
   currentAction: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!1 &7906391517900627495
 GameObject:
   m_ObjectHideFlags: 0
