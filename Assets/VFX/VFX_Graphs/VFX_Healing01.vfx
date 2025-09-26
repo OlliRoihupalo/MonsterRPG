@@ -127,34 +127,10 @@ MonoBehaviour:
     - model: {fileID: 114350483966675501}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 114350483966675160}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675614}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 114350483966675539}
       id: 0
       isStickyNote: 0
     - model: {fileID: 114350483966675541}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675504}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675507}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675513}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675515}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675521}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675525}
       id: 0
       isStickyNote: 0
   - title: FLARE UPWARDS
@@ -177,25 +153,10 @@ MonoBehaviour:
     - model: {fileID: 114350483966675427}
       id: 0
       isStickyNote: 0
-    - model: {fileID: 114350483966675229}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675617}
-      id: 0
-      isStickyNote: 0
     - model: {fileID: 114350483966675549}
       id: 0
       isStickyNote: 0
     - model: {fileID: 114350483966675551}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675430}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675433}
-      id: 0
-      isStickyNote: 0
-    - model: {fileID: 114350483966675439}
       id: 0
       isStickyNote: 0
   - title: SPARKLES

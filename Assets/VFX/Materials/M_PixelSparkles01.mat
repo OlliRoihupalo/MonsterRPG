@@ -36,6 +36,7 @@ Material:
   disabledShaderPasses:
   - DepthOnly
   - MOTIONVECTORS
+  - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -62,7 +63,7 @@ Material:
     - _AlphaToMask: 0
     - _Bits: 32
     - _Blend: 0
-    - _CastShadows: 1
+    - _CastShadows: 0
     - _Cull: 2
     - _DstBlend: 10
     - _QueueControl: 0
