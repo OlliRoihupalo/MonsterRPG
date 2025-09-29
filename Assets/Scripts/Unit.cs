@@ -115,10 +115,10 @@ public class Unit : MonoBehaviour
                 if (e.owner == this)
                 {
                     Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
-                    /*if (e.timelinePosition == 0)
+                    if (e.timelinePosition == 0)
                     {
                         playerController.TimelineEventEnd();
-                    }
+                    }/*
                     else
                     {
                         Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
@@ -148,7 +148,6 @@ public class Unit : MonoBehaviour
                     // End combat
                     playerController.EndCombat();
                 }
-
             }
             else
             {

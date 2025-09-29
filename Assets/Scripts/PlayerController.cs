@@ -119,6 +119,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (unit != null && activeUnit == unit && inCombat && unit.playerUI.activeSelf == false)
+        {
+            unit.playerUI.SetActive(true);
+        }
+
         if (selectAction.WasPerformedThisFrame())// && !MouseOverUI())
         {
             if (hover != null)
@@ -149,6 +154,7 @@ public class PlayerController : MonoBehaviour
                         targets[0] = hover.GetComponent<Unit>();
                         unit.currentAction.Perform(targets);
                     }
+                    unit.playerUI.SetActive(false);
                     CancelAction();
                     TimelineEventEnd();
                 }
@@ -243,7 +249,23 @@ public class PlayerController : MonoBehaviour
                     time = curTime;
                 }
             }
-            print(time);
+            
+            float[] values = new float[events.Length];
+            for (int i = 0; i < events.Length; i++)
+            {
+                values[i] = events[i].timelinePosition;
+            }
+            Array.Sort(values);
+            print("Values: " + values[0] + " - " + values[values.Length - 1]);
+            /*
+            for (int i = 1; i < values.Length; i++)
+            {
+                if (values[i] == values[i - 1])
+                {
+                    duplicateValue = values[i];
+                }
+            }
+            */
 
             if (next != null)
             {
@@ -268,6 +290,13 @@ public class PlayerController : MonoBehaviour
                     }
                 }
             }
+            else
+            {
+                print("Next event timestamp: " + time);
+                print("No next event");
+                RoundStart();
+                return;
+            }
 
             foreach (TimelineEvent e in events)
             {
@@ -282,7 +311,7 @@ public class PlayerController : MonoBehaviour
                 if (e.timelinePosition == (int)time)
                 {
                     activeUnit = e.owner;
-                    print("Active unit: " + activeUnit);
+                    print("Active unit: " + activeUnit + " of faction " + activeUnit.faction);
                 }
                 if ((int)time > 0)
                 {
@@ -330,6 +359,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        FindDuplicateValues();
         TimelineEventEnd();
     }
 
@@ -345,6 +375,36 @@ public class PlayerController : MonoBehaviour
 
         unit.currentAction = null;
         targeting = false;
+    }
+
+    public void FindDuplicateValues()
+    {
+        TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
+        foreach (TimelineEvent e in events)
+        {
+            foreach (TimelineEvent v in events)
+            {
+                if (e.timelinePosition == v.timelinePosition && e.GetComponentIndex() != v.GetComponentIndex())
+                {
+                    EliminateDuplicateValues(e.GetComponentIndex());
+                    return;
+                }
+            }
+        }
+        print("No duplicate values found.");
+    }
+
+    public void EliminateDuplicateValues(int index)
+    {
+        TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
+        foreach (TimelineEvent e in events)
+        {
+            if (e.GetComponentIndex() != index)
+            {
+                e.timelinePosition++;
+            }
+        }
+        FindDuplicateValues();
     }
 
     public GameObject[] CreateRandomEnemies()
@@ -363,6 +423,15 @@ public class PlayerController : MonoBehaviour
     {
         int numberOfEnemies = enemies.Length;
         int numberOfPlayerUnits = playerUnits.Length;
+
+        if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
+        {
+            TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
+            foreach (TimelineEvent e in events)
+            {
+                Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
+            }
+        }
 
         for (int i = 0; i < numberOfEnemies; i++)
         {
@@ -386,12 +455,20 @@ public class PlayerController : MonoBehaviour
     {
         player.transform.position = lastPosition;
         inCombat = false;
+        unit = null;
+        activeUnit = null;
 
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+        TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
 
         foreach (GameObject unit in units)
         {
             Destroy(unit);
+        }
+
+        foreach (TimelineEvent e in events)
+        {
+            Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
         }
     }
 
