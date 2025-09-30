@@ -55,6 +55,7 @@ Material:
     - _Bits: 32
     - _Blend: 0
     - _CastShadows: 0
+    - _Clip: 0
     - _Cull: 2
     - _DstBlend: 10
     - _QueueControl: 0
