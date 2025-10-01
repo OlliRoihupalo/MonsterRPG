@@ -13,7 +13,9 @@ public class CombatAction : ScriptableObject
     public float statMultiplier;
     public float statValue;
     public Unit user;
-    //public ParticleSystem ps;
+    public GameObject particleSystem;
+    public Vector3 visualEffectOffset;
+    public Quaternion visualEffectRotation;
 
     public virtual void Perform(Unit[] targets)
     {

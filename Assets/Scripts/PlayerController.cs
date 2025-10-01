@@ -108,6 +108,10 @@ public class PlayerController : MonoBehaviour
         {
             player.transform.Translate(cameraSpeed * Time.deltaTime * movement);
         }
+        else
+        {
+            EliminateInvalidEvents();
+        }
 
         TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
 
@@ -154,7 +158,7 @@ public class PlayerController : MonoBehaviour
                         targets[0] = hover.GetComponent<Unit>();
                         unit.currentAction.Perform(targets);
                     }
-                    unit.playerUI.SetActive(false);
+                    //unit.playerUI.SetActive(false);
                     CancelAction();
                     TimelineEventEnd();
                 }
@@ -250,6 +254,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
             
+            /*
             float[] values = new float[events.Length];
             for (int i = 0; i < events.Length; i++)
             {
@@ -257,7 +262,7 @@ public class PlayerController : MonoBehaviour
             }
             Array.Sort(values);
             print("Values: " + values[0] + " - " + values[values.Length - 1]);
-            /*
+            
             for (int i = 1; i < values.Length; i++)
             {
                 if (values[i] == values[i - 1])
@@ -373,7 +378,11 @@ public class PlayerController : MonoBehaviour
             un.target.SetActive(false);
         }
 
-        unit.currentAction = null;
+        if (unit != null)
+        {
+            unit.currentAction = null;
+        }
+        
         targeting = false;
     }
 
@@ -405,6 +414,33 @@ public class PlayerController : MonoBehaviour
             }
         }
         FindDuplicateValues();
+    }
+
+    public void EliminateInvalidEvents()
+    {
+        float time = Mathf.Infinity;
+        if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
+        {
+            TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
+
+            foreach (TimelineEvent e in events)
+            {
+                float curTime = e.timelinePosition;
+                if (curTime < time)
+                {
+                    time = curTime;
+                }
+            }
+        }
+        else
+        {
+            TimelineEventEnd();
+        }
+        if ((int)time != 0)
+        {
+            print((int)time);
+            TimelineEventEnd();
+        }
     }
 
     public GameObject[] CreateRandomEnemies()

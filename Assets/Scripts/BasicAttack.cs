@@ -12,6 +12,7 @@ public class BasicAttack : CombatAction
             if (target != null)
             {
                 target.TakeDamage(statValue * statMultiplier);
+                GameObject o = Instantiate(particleSystem, target.gameObject.transform.position + visualEffectOffset, visualEffectRotation);
             }
         }
         user = null;

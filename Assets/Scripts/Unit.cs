@@ -103,6 +103,7 @@ public class Unit : MonoBehaviour
         health -= damage;
         healthDisplay.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * healthBarLength));
         healthDisplayTimer = healthDisplayDelay;
+
         if (health <= 0)
         {
             //animator.SetTrigger("Death");
@@ -115,14 +116,6 @@ public class Unit : MonoBehaviour
                 if (e.owner == this)
                 {
                     Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
-                    if (e.timelinePosition == 0)
-                    {
-                        playerController.TimelineEventEnd();
-                    }/*
-                    else
-                    {
-                        Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
-                    }*/
                 }
             }
 
