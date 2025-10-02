@@ -14,6 +14,9 @@ public class CombatAction : ScriptableObject
     public float statValue;
     public Unit user;
     public GameObject particleSystem;
+    public string particleOrigin;
+    public bool rotateToTarget;
+    public Vector3 originPoint;
     public Vector3 visualEffectOffset;
     public Quaternion visualEffectRotation;
 

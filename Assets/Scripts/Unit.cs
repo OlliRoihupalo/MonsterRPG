@@ -144,6 +144,7 @@ public class Unit : MonoBehaviour
             }
             else
             {
+                playerController.score++;
                 int enemies = 0;
 
                 foreach (GameObject unit in units)

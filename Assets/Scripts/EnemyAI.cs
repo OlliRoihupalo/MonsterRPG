@@ -82,14 +82,14 @@ public class EnemyAI : MonoBehaviour
                     temp++;
                 }
             }
-            foreach (Unit enemy in enemies)
+            /*foreach (Unit enemy in enemies)
             {
                 if (enemy != null && enemy.health < enemy.maxHealth) // Check for enemies that are missing health
                 {
                     targetFound = true;
                     target = enemy;
                 }
-            }
+            }*/
             if (targetFound == false)
             {
                 target = enemies[UnityEngine.Random.Range(0, temp)];

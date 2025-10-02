@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     //public float cameraRotationSpeed;
     public Vector2 lookVector;
     public Vector2 moveVector;
+    public int score;
     public Unit unit;
     public bool targeting = false;
     public bool inCombat = false;
@@ -274,7 +275,7 @@ public class PlayerController : MonoBehaviour
 
             if (next != null)
             {
-                if (next.owner.TryGetComponent<Unit>(out Unit u))
+                if (next.owner != null && next.owner.TryGetComponent<Unit>(out Unit u))
                 {
                     if (u.faction == "Player")
                     {
@@ -294,10 +295,13 @@ public class PlayerController : MonoBehaviour
                         unit = null;
                     }
                 }
+                else
+                {
+                    Destroy(next);
+                }
             }
             else
             {
-                print("Next event timestamp: " + time);
                 print("No next event");
                 RoundStart();
                 return;
