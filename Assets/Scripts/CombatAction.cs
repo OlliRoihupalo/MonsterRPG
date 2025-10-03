@@ -9,6 +9,7 @@ public class CombatAction : ScriptableObject
     public int levelObtained;
     public string targetGroup;
     public bool cleave;
+    public bool ignoreDefense;
     public string usesStat;
     public float statMultiplier;
     public float statValue;

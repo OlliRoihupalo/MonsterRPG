@@ -37,7 +37,11 @@ public class PlayerController : MonoBehaviour
     public Unit unit;
     public bool targeting = false;
     public bool inCombat = false;
+    public float currentXP;
+    public float nextLevelXPRequirement;
+    public int level;
     public GameObject combatArea;
+    public GameObject cancelButton;
     public Vector3 lastPosition;
     public GameObject[] enemyList;
     public GameObject[] playerUnits;
@@ -49,8 +53,6 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     private InputAction selectAction;
     private InputAction interactAction;
-    //private InputAction rotateAction;
-    //private NavMeshPath path;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +65,7 @@ public class PlayerController : MonoBehaviour
         playerPositions = GameObject.Find("PlayerSideSlots").GetComponentsInChildren<Transform>();
         enemyPositions = GameObject.Find("EnemySideSlots").GetComponentsInChildren<Transform>();
         timeline = GameObject.Find("Timeline");
+        cancelButton = GameObject.Find("CancelButton");
         playerInput = GetComponent<PlayerInput>();
         lookAction = playerInput.actions.FindAction("Cursor");
         moveAction = playerInput.actions.FindAction("Move");
@@ -70,10 +73,7 @@ public class PlayerController : MonoBehaviour
         selectAction = playerInput.actions.FindAction("Attack");
         interactAction = playerInput.actions.FindAction("Interact");
         movement = Vector3.zero;
-
-        //print("Not Walkable: " + NavMesh.GetAreaFromName("Not Walkable"));
-        //print("Walkable: " + NavMesh.GetAreaFromName("Walkable"));
-        //print(GameObject.Find("PauseButton").GetComponentAtIndex(3));
+        cancelButton.SetActive(false);
     }
 
     public GameObject FindClosestTagged(string tag, Vector3 position)
@@ -114,6 +114,14 @@ public class PlayerController : MonoBehaviour
             EliminateInvalidEvents();
         }
 
+        if (currentXP >= nextLevelXPRequirement)
+        {
+            float overflow = currentXP - nextLevelXPRequirement;
+            currentXP = overflow;
+            nextLevelXPRequirement += 50;
+            level++;
+        }
+
         TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
 
         foreach (TimelineEvent e in events)
@@ -124,9 +132,17 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (unit != null && activeUnit == unit && inCombat && unit.playerUI.activeSelf == false)
+        if (unit != null && activeUnit == unit && inCombat)
         {
-            unit.playerUI.SetActive(true);
+            if (unit.playerUI.activeSelf == false)
+            {
+                unit.playerUI.SetActive(true);
+            }
+
+            if (targeting)
+            {
+                // unit
+            }
         }
 
         if (selectAction.WasPerformedThisFrame())// && !MouseOverUI())
@@ -159,7 +175,6 @@ public class PlayerController : MonoBehaviour
                         targets[0] = hover.GetComponent<Unit>();
                         unit.currentAction.Perform(targets);
                     }
-                    //unit.playerUI.SetActive(false);
                     CancelAction();
                     TimelineEventEnd();
                 }
@@ -385,8 +400,10 @@ public class PlayerController : MonoBehaviour
         if (unit != null)
         {
             unit.currentAction = null;
+            unit.actionDescription.SetActive(false);
         }
-        
+
+        cancelButton.SetActive(false);
         targeting = false;
     }
 
@@ -447,9 +464,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public GameObject[] CreateRandomEnemies()
+    public GameObject[] CreateRandomEnemies(int level)
     {
-        int numberOfEnemies = 3;
+        int numberOfEnemies = score;
+        numberOfEnemies -= level;
+        if (numberOfEnemies <= 0)
+        {
+            numberOfEnemies = 1;
+        }
+        if (numberOfEnemies > 5)
+        {
+            numberOfEnemies = 5;
+        }
         GameObject[] enemies = new GameObject[numberOfEnemies];
 
         for (int i = 0; i < numberOfEnemies; i++)
@@ -459,11 +485,25 @@ public class PlayerController : MonoBehaviour
         return enemies;
     }
 
-    public void BeginCombat(GameObject[] enemies)
+    public int SetEnemyLevel()
+    {
+        int lv = (int)Mathf.Floor(score / 3);
+        if (lv < 0)
+        {
+            lv = 0;
+        }
+        return lv;
+    }
+
+    public void BeginCombat(GameObject[] enemies, int enemyLevel)
     {
         int numberOfEnemies = enemies.Length;
         int numberOfPlayerUnits = playerUnits.Length;
-
+        if ((int)Mathf.Floor(score / 3) > 5)
+        {
+            enemyLevel = 0;
+        }
+        
         if (timeline.TryGetComponent<TimelineEvent>(out TimelineEvent t))
         {
             TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
@@ -476,12 +516,15 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < numberOfEnemies; i++)
         {
             GameObject enemy = Instantiate(enemies[i], enemyPositions[i + 1].position, Quaternion.identity);
+            enemy.GetComponent<Unit>().IncreaseStatsByLevel(enemyLevel);
         }
 
         for (int i = 0; i < numberOfPlayerUnits; i++)
         {
             GameObject playerUnit = Instantiate(playerUnits[i], playerPositions[i + 1].position, Quaternion.identity);
-            playerUnit.GetComponent<Unit>().faction = "Player";
+            Unit pu = playerUnit.GetComponent<Unit>();
+            pu.faction = "Player";
+            pu.IncreaseStatsByLevel(level);
         }
 
         inCombat = true;
@@ -500,6 +543,7 @@ public class PlayerController : MonoBehaviour
 
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
         TimelineEvent[] events = timeline.GetComponents<TimelineEvent>();
+        GameObject[] effects = GameObject.FindGameObjectsWithTag("VisualEffect");
 
         foreach (GameObject unit in units)
         {
@@ -510,11 +554,16 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(timeline.GetComponentAtIndex(e.GetComponentIndex()));
         }
+
+        foreach (GameObject effect in effects)
+        {
+            Destroy(effect);
+        }
     }
 
     public void RandomEncounter()
     {
-        BeginCombat(CreateRandomEnemies());
+        BeginCombat(CreateRandomEnemies(SetEnemyLevel()), SetEnemyLevel());
     }
 
     private bool MouseOverUI()

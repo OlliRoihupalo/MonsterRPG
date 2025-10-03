@@ -4908,7 +4908,7 @@ GameObject:
   - component: {fileID: 7264438336670821886}
   m_Layer: 0
   m_Name: VFX_Healing01
-  m_TagString: Untagged
+  m_TagString: VisualEffect
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -960,7 +960,7 @@ GameObject:
   - component: {fileID: 243102067}
   - component: {fileID: 243102066}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: EncounterButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3112,7 +3112,7 @@ GameObject:
   - component: {fileID: 1536527158}
   - component: {fileID: 1536527157}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: CancelButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3527,12 +3527,12 @@ GameObject:
   - component: {fileID: 1648126854}
   - component: {fileID: 1648126853}
   m_Layer: 5
-  m_Name: Button
+  m_Name: EndTurnButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1648126852
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3983,10 +3983,15 @@ MonoBehaviour:
   cameraSpeed: 5
   lookVector: {x: 0, y: 0}
   moveVector: {x: 0, y: 0}
+  score: 0
   unit: {fileID: 0}
   targeting: 0
   inCombat: 0
+  currentXP: 0
+  nextLevelXPRequirement: 0
+  level: 0
   combatArea: {fileID: 0}
+  cancelButton: {fileID: 0}
   lastPosition: {x: 0, y: 0, z: 0}
   enemyList:
   - {fileID: 7676739863343539402, guid: d6bdf9dc28f0b3f4aaa05dc8d6a52ba0, type: 3}

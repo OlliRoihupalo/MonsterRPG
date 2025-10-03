@@ -19,16 +19,27 @@ public class BasicAttack : CombatAction
         {
             if (target != null)
             {
-                if (particleOrigin == null || particleOrigin == "target" || particleOrigin == "Target")
+                if (particleSystem != null)
                 {
-                    originPoint = target.gameObject.transform.position;
+                    if (particleOrigin == null || particleOrigin == "target" || particleOrigin == "Target")
+                    {
+                        originPoint = target.gameObject.transform.position;
+                    }
+                    GameObject o = Instantiate(particleSystem, originPoint + visualEffectOffset, visualEffectRotation);
+                    if (rotateToTarget)
+                    {
+                        o.transform.LookAt(target.gameObject.transform.position + new Vector3(0, 0, -1));
+                    }
                 }
-                GameObject o = Instantiate(particleSystem, originPoint + visualEffectOffset, visualEffectRotation);
-                if (rotateToTarget)
+
+                if (ignoreDefense)
                 {
-                    o.transform.LookAt(target.gameObject.transform.position + visualEffectOffset);
+                    target.TakeDamage(statValue * statMultiplier);
                 }
-                target.TakeDamage(statValue * statMultiplier);
+                else
+                {
+                    target.TakeDamage((statValue * statMultiplier) - target.defense);
+                }
             }
         }
         user = null;

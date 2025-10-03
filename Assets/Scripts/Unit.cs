@@ -22,11 +22,16 @@ public class Unit : MonoBehaviour
     public bool downed = false;
     public string faction;
     public int level;
-    public float attackPower;
-    public float defense;
     public float maxHealth;
     public float health;
+    public float attackPower;
+    public float defense;
     public int speed;
+    public float xpYield;
+    public float healthGrowthPerLevel;
+    public float attackGrowthPerLevel;
+    public float defenseGrowthPerLevel;
+    public float xpYieldPerLevel;
     public CombatAction[] skillList; // A list of all actions that the unit can learn (through levelusp etc)
     public GameObject highlight;
     public GameObject target;
@@ -35,6 +40,7 @@ public class Unit : MonoBehaviour
     public float healthDisplayDelay = 1.2f;
     public TMPro.TextMeshProUGUI nameDisplay;
     public CombatAction currentAction;
+    public GameObject actionDescription;
     public Animator animator;
     private RectTransform healthBar;
     private RectTransform healthDisplay;
@@ -42,7 +48,6 @@ public class Unit : MonoBehaviour
     private float healthLossAmount;
     private float healthDisplayTimer;
 
-    // healthGrowthPerLevel, attackGrowthPerLevel, defenseGrowthPerLevel, level, currentXP, nextLevelXPRequirement
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -52,7 +57,7 @@ public class Unit : MonoBehaviour
         sprite = transform.Find("sprite root").gameObject;
         animator = sprite.transform.Find("Sprite").GetComponent<Animator>();
         unitUI = transform.Find("UnitUI").GetComponent<Canvas>();
-        //playerUI = transform.Find("PlayerUI").gameObject;
+        playerUI = transform.Find("PlayerUI").gameObject;
         skills = playerUI.transform.Find("Skills List").Find("Viewport").Find("Content").gameObject;
         healthBar = unitUI.transform.Find("HealthBar").GetComponent<RectTransform>();
         healthDisplay = healthBar.transform.Find("HealthDisplay").GetComponent<RectTransform>();
@@ -61,13 +66,15 @@ public class Unit : MonoBehaviour
         target = unitUI.transform.Find("Target").gameObject;
         nameDisplay = playerUI.transform.Find("NameDisplay").GetComponent<TMPro.TextMeshProUGUI>();
         nameDisplay.text = unitName;
+        actionDescription = playerUI.transform.Find("Skill Description").gameObject;
         cam = Camera.main.gameObject;
         health = maxHealth;     // The HP of player units should carry over between battles (So they start the battle already damaged if they took damage in aprevious battle)
         healthLossAmount = healthBarLength;
         highlight.SetActive(false);
         target.SetActive(false);
+        actionDescription.SetActive(false);
         playerUI.SetActive(false);
-
+        //Assets/Scripts/Unit.cs:61
         CreateSkillList();
     }
 
@@ -94,13 +101,35 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public void IncreaseStatsByLevel(int lv)
+    {
+        if (lv > 0)
+        {
+            level = lv;
+            maxHealth += healthGrowthPerLevel * lv;
+            attackPower += attackGrowthPerLevel * lv;
+            defense += defenseGrowthPerLevel * lv;
+            xpYield += xpYieldPerLevel;
+            health = maxHealth;
+        }
+    }
+
     public void TakeDamage(float damage)
     {
-        /*if (health == maxHealth)
+        if (damage < 0)
         {
-            canvas.gameObject.SetActive(true);
-        }*/
-        health -= damage;
+            downed = false;
+            health += Mathf.Abs(damage);
+            if (health > maxHealth)
+            {
+                health = maxHealth;
+            }
+        }
+        else
+        {
+            health -= damage;
+        }
+
         healthDisplay.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Ceil((health / maxHealth) * healthBarLength));
         healthDisplayTimer = healthDisplayDelay;
 
@@ -145,6 +174,7 @@ public class Unit : MonoBehaviour
             else
             {
                 playerController.score++;
+                playerController.currentXP += xpYield;
                 int enemies = 0;
 
                 foreach (GameObject unit in units)
@@ -213,6 +243,9 @@ public class Unit : MonoBehaviour
     {
         combatAction.user = this;
         currentAction = combatAction;
+        playerController.cancelButton.SetActive(true);
+        actionDescription.SetActive(true);
+        actionDescription.GetComponent<TMPro.TextMeshProUGUI>().text = combatAction.description;
 
         playerController.targeting = true;
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");

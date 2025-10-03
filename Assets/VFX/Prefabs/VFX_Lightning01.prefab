@@ -4907,7 +4907,7 @@ GameObject:
   - component: {fileID: 840509714958493911}
   m_Layer: 0
   m_Name: VFX_Lightning01
-  m_TagString: Untagged
+  m_TagString: VisualEffect
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
